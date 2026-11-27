@@ -51,15 +51,17 @@ async function loadDashboard() {
     let replied = 0;
     
     inquiries.forEach(inq => {
-      if (inq.status === 'Nuevo' || inq.status === 'Pendiente de respuesta') pending++;
-      if (inq.status === 'Respondido' || inq.status === 'En seguimiento' || inq.status === 'Ganado') replied++;
+    const localStatus = localStorage.getItem(`inq_status_${inq.id}`);
+      const currentStatus = localStatus || inq.status;
+
+      if (currentStatus === 'Nuevo' || currentStatus === 'Pendiente de respuesta') pending++;
+      if (currentStatus === 'Respondido' || currentStatus === 'En seguimiento' || currentStatus === 'Ganado') replied++;
     });
 
     if(document.getElementById('dash-total-inq')) document.getElementById('dash-total-inq').innerText = total;
     if(document.getElementById('dash-pending')) document.getElementById('dash-pending').innerText = pending;
     if(document.getElementById('dash-replied')) document.getElementById('dash-replied').innerText = replied;
-
-    const followupRes = await fetch(`${API_BASE_URL}/api/followups`);
+   const followupRes = await fetch(`${API_BASE_URL}/api/followups`);
     const followups = await followupRes.json();
     const followupContainer = document.getElementById('dash-followup-list');
     if (followupContainer) {
@@ -82,8 +84,7 @@ async function loadDashboard() {
         });
       }
     }
-
-    const activityContainer = document.getElementById('dash-activity-list');
+         const activityContainer = document.getElementById('dash-activity-list');
     if (activityContainer) {
       activityContainer.innerHTML = "";
       const recentInquiries = inquiries.slice(0, 3);
@@ -108,7 +109,6 @@ async function loadDashboard() {
 
   } catch(e) { console.error("加载工作台数据失败", e); }
 }
-
 document.body.addEventListener('click', (e) => {
   if (e.target.classList.contains('dash-followup-btn')) {
     loadClientDetail(e.target.getAttribute('data-client'));
@@ -118,6 +118,7 @@ document.body.addEventListener('click', (e) => {
     loadClientDetail(activityItem.getAttribute('data-client'));
   }
 });
+
 loadDashboard();
 const parseBtn = document.getElementById('parseBtn');
 const confirmBtn = document.getElementById('confirmBtn');
@@ -311,14 +312,20 @@ function renderInquiryTable() {
   const statusFilter = document.getElementById('inquiryStatusFilter')?.value || 'all';
 
   const filtered = allInquiriesData.filter(inq => {
+     const localStatus = localStorage.getItem(`inq_status_${inq.id}`);
+    const currentStatus = localStatus || inq.status;
+
     const matchSearch = inq.id.toLowerCase().includes(keyword) || inq.customerName.toLowerCase().includes(keyword) || (inq.product && inq.product.toLowerCase().includes(keyword));
-    const matchStatus = statusFilter === 'all' || inq.status === statusFilter;
+    const matchStatus = statusFilter === 'all' || currentStatus === statusFilter;
     return matchSearch && matchStatus;
   });
 
   tbody.innerHTML = filtered.length === 0 ? "<tr><td colspan='7' style='padding: 32px; text-align: center; color: var(--text-muted);'>没有找到匹配的询盘记录。</td></tr>" : "";
   
   filtered.forEach(inq => {
+    const localStatus = localStorage.getItem(`inq_status_${inq.id}`);
+    const currentStatus = localStatus || inq.status;
+
     tbody.innerHTML += `
       <tr style="border-bottom: 1px solid var(--border);">
         <td style="padding: 16px 24px; font-weight: 600;">${inq.id}</td>
@@ -328,12 +335,12 @@ function renderInquiryTable() {
         <td style="padding: 16px 24px; color: var(--text-muted);">${inq.createdAt}</td>
         <td style="padding: 16px 24px;">
           <select onchange="updateInquiryStatus('${inq.id}', this.value)" style="padding: 4px; border-radius: 4px; border: 1px solid var(--border); background: white; font-weight: 600; color: var(--primary); cursor: pointer;">
-            <option value="Nuevo" ${inq.status === 'Nuevo' ? 'selected' : ''}>Nuevo</option>
-            <option value="Pendiente de respuesta" ${inq.status === 'Pendiente de respuesta' ? 'selected' : ''}>Pendiente</option>
-            <option value="Respondido" ${inq.status === 'Respondido' ? 'selected' : ''}>Respondido</option>
-            <option value="En seguimiento" ${inq.status === 'En seguimiento' ? 'selected' : ''}>En seguimiento</option>
-            <option value="Ganado" ${inq.status === 'Ganado' ? 'selected' : ''}>Ganado</option>
-            <option value="Cerrado" ${inq.status === 'Cerrado' ? 'selected' : ''}>Cerrado</option>
+            <option value="Nuevo" ${currentStatus === 'Nuevo' ? 'selected' : ''}>Nuevo</option>
+            <option value="Pendiente de respuesta" ${currentStatus === 'Pendiente de respuesta' ? 'selected' : ''}>Pendiente</option>
+            <option value="Respondido" ${currentStatus === 'Respondido' ? 'selected' : ''}>Respondido</option>
+            <option value="En seguimiento" ${currentStatus === 'En seguimiento' ? 'selected' : ''}>En seguimiento</option>
+            <option value="Ganado" ${currentStatus === 'Ganado' ? 'selected' : ''}>Ganado</option>
+            <option value="Cerrado" ${currentStatus === 'Cerrado' ? 'selected' : ''}>Cerrado</option>
           </select>
         </td>
         <td style="padding: 16px 24px; text-align: right;">
@@ -346,15 +353,22 @@ function renderInquiryTable() {
 
 window.updateInquiryStatus = async function(id, newStatus) {
   try {
-    const res = await fetch(`${API_BASE_URL}/api/inquiries/${id}`, {
-      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: newStatus })
-    });
-    if (res.ok) {
-      loadDashboard(); 
-    } else {
-      alert("更新状态失败，请检查后端。");
+     const targetInquiry = allInquiriesData.find(inq => inq.id === id);
+    if (targetInquiry) {
+      targetInquiry.status = newStatus;
     }
+ try {
+      await fetch(`${API_BASE_URL}/api/inquiries/${id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+    } catch (e) {
+      console.warn("Vercel 环境只读，使用前端状态缓存。");
+    }
+     localStorage.setItem(`inq_status_${id}`, newStatus);
+      loadDashboard(); 
+    setTimeout(() => { renderInquiryTable(); }, 100);
+
   } catch (e) { alert("网络错误"); }
 };
 
@@ -551,7 +565,9 @@ async function loadAnalytics() {
     const statusCounts = { "Nuevo": 0, "Pendiente de respuesta": 0, "Respondido": 0, "En seguimiento": 0, "Ganado": 0, "Cerrado": 0 };
 
     inquiries.forEach(inq => {
-      const s = inq.status || "Nuevo"; 
+      const localStatus = localStorage.getItem(`inq_status_${inq.id}`);
+      const s = localStatus || inq.status || "Nuevo"; 
+
       if (statusCounts[s] !== undefined) statusCounts[s]++;
       if (['Respondido', 'En seguimiento', 'Ganado'].includes(s)) repliedCount++;
       if (s === 'Ganado') winCount++;
