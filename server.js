@@ -8,6 +8,7 @@ const app = express();
 app.use(express.static(__dirname));
 app.use(cors());
 app.use(express.json());
+app.use(express.static(__dirname));
 
 const INQ_FILE = path.join(__dirname, 'inquiries.json');
 const CUST_FILE = path.join(__dirname, 'customers.json');
