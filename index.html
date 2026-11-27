@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ComercioAI - 西语外贸助手</title>
+   <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+  <aside class="sidebar">
+      <div class="logo">
+        <div class="logo-icon"><i data-lucide="globe"></i></div>
+        <span>ComercioAI</span>
+      </div>
+      <div class="nav-section" data-i18n="navWorkspace">WORKSPACE</div>
+      <nav class="nav-menu">
+        <button class="nav-item active" data-target="view-dashboard">
+          <span><i data-lucide="layout-dashboard"></i> <span data-i18n="dashboard">工作台</span></span>
+        </button>
+        <button class="nav-item" data-target="view-parse">
+          <span><i data-lucide="mail-search"></i> <span data-i18n="parse">询盘解析</span></span>
+        </button>
+        <button class="nav-item" data-target="view-reply">
+          <span><i data-lucide="reply"></i> <span data-i18n="reply">商务回信</span></span>
+        </button>
+        <button class="nav-item" data-target="view-inquiry">
+          <span><i data-lucide="inbox"></i> <span data-i18n="inquiry">询盘管理</span></span>
+        </button>
+        <button class="nav-item" data-target="view-clients">
+          <span><i data-lucide="users"></i> <span data-i18n="clients">客户管理</span></span>
+        </button>
+        <button class="nav-item" data-target="view-terms">
+          <span><i data-lucide="book-open"></i> <span data-i18n="terms">术语知识库</span></span>
+        </button>
+      </nav>
+      <div class="nav-section" data-i18n="navManagement">MANAGEMENT</div>
+      <nav class="nav-menu">
+        <button class="nav-item" data-target="view-analytics">
+          <span><i data-lucide="bar-chart-2"></i> <span data-i18n="analytics">数据与反馈</span></span>
+        </button>
+      </nav>
+    </aside>
+    <main class="main-content">
+      <header class="topbar">
+        <div class="breadcrumb">
+          <span data-i18n="breadcrumbWorkspace">工作区</span> / <span id="current-page-title" data-i18n="dashboard">工作台</span>
+        </div>
+        <div class="user-actions">
+          <button id="languageToggle" class="language-toggle" type="button" style="padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border); cursor: pointer;">
+            中文 / ES
+          </button>
+          <span data-i18n="userCenter">用户中心</span>
+        </div>
+      </header>
+
+      <div class="view-container">
+      <section id="view-dashboard" class="view-panel active">
+          <h1 class="page-title" data-i18n="pageDashboard">工作台</h1>
+          <p class="page-subtitle" data-i18n="subDashboard">Gestiona tus consultas comerciales</p>
+          
+          <div class="dashboard-stats">
+            <div class="stat-card">
+              <span class="stat-label" data-i18n="statWeek">本周处理询盘</span>
+              <span class="stat-value" id="dash-total-inq">0</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label" data-i18n="statPending">待回复</span>
+              <span class="stat-value" id="dash-pending" style="color: var(--danger);">0</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label" data-i18n="statReplied">已回复</span>
+              <span class="stat-value" id="dash-replied" style="color: var(--success);">0</span>
+            </div>
+          </div>
+
+          <div class="dashboard-columns">
+            <div>
+              <h3 style="margin: 0 0 16px 0; font-size: 16px;" data-i18n="titleFollowup">今日跟进 (Follow-ups)</h3>
+              <div class="recent-list" id="dash-followup-list" style="margin-bottom: 32px;">
+               </div>
+            </div>
+
+            <div>
+              <h3 style="margin: 0 0 16px 0; font-size: 16px;" data-i18n="titleActivity">最近客户活动</h3>
+              <div class="activity-timeline" id="dash-activity-list">
+             </div>
+            </div>
+          </div>
+        </section>
+<section id="view-parse" class="view-panel">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+            <div>
+              <h1 class="page-title" data-i18n="pageParse">询盘解析</h1>
+              <p class="page-subtitle" data-i18n="subParse">Análisis de consultas · Extrae información comercial con IA</p>
+            </div>
+            <div style="background: var(--success-bg); color: var(--success); padding: 4px 12px; border-radius: 20px; font-size: 13px; font-weight: 600;">AI 工作区</div>
+          </div>
+          
+          <div class="split-layout">
+            <div class="split-left">
+              <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">01 · 客户原始询盘</h3>
+              <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Consulta original</p>
+              <textarea id="inquiryInput" class="inquiry-textarea" placeholder="Ejemplo: Hola, necesitamos 500 cajas..." style="background-color: #f8fafc; border: none;"></textarea>
+              <div class="btn-row" style="margin-top: 16px; margin-bottom: 16px;">
+                <button id="loadSampleBtn" class="btn btn-secondary" type="button">载入示例</button>
+                <button id="clearBtn" class="btn btn-secondary" type="button">清空</button>
+              </div>
+              <button id="parseBtn" class="btn btn-primary" type="button" style="width: 100%; padding: 14px; font-size: 15px;">✦ AI 解析</button>
+            </div>
+
+            <div class="split-right">
+              <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">02 · AI 提取结果</h3>
+              <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 16px;">Información extraída</p>
+
+              <div id="structured-data" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="data-row"><label>产品 <span style="color:#a0aec0; font-weight:400;">Producto</span></label><input type="text" id="field-product" class="editable-field" placeholder="未提及" value=""></div>
+                <div class="data-row"><label>数量 <span style="color:#a0aec0; font-weight:400;">Cantidad</span></label><input type="text" id="field-quantity" class="editable-field" placeholder="未提及" value=""></div>
+                <div class="data-row"><label>交期 <span style="color:#a0aec0; font-weight:400;">Plazo de entrega</span></label><input type="text" id="field-deadline" class="editable-field" placeholder="未提及" value=""></div>
+                <div class="data-row"><label>贸易术语 <span style="color:#a0aec0; font-weight:400;">Incoterm</span></label><input type="text" id="field-incoterm" class="editable-field" placeholder="未提及" value=""></div>
+                <div class="data-row"><label>目的港 <span style="color:#a0aec0; font-weight:400;">Puerto</span></label><input type="text" id="field-port" class="editable-field" placeholder="未提及" value=""></div>
+                <div class="data-row"><label>付款条件 <span style="color:#a0aec0; font-weight:400;">Pago</span></label><input type="text" id="field-finance" class="editable-field" placeholder="未提及" value=""></div>
+              </div>
+
+              <div class="ai-hint-box" style="margin-top: 24px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                  <div>
+                    <h4 style="margin: 0;">03 · AI 业务提示</h4>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-top: 4px;">Revisión comercial</p>
+                  </div>
+                  <div id="hint-message" style="background: #fee2e2; color: #dc5555; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">需要确认</div>
+                </div>
+                <div id="hint-list" style="font-size: 14px; color: var(--text-main); margin-bottom: 24px; line-height: 1.6;">
+                  <p style="color: var(--text-muted);">点击解析后，系统将自动检测缺失的商务信息。</p>
+                </div>
+                <div style="display: flex; gap: 12px;">
+                  <button id="saveInquiryBtn" class="btn btn-secondary" style="flex: 1; padding: 14px; font-size: 15px;" disabled>💾 保存至询盘库</button>
+                  <button id="confirmBtn" class="btn btn-primary" style="flex: 1; background: var(--success); border-color: var(--success); padding: 14px; font-size: 15px;" disabled>确认并生成回信</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+ <section id="view-reply" class="view-panel">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+            <div>
+              <h1 class="page-title" data-i18n="reply">商务回信</h1>
+              <p class="page-subtitle">Generación y edición de correos comerciales</p>
+            </div>
+          </div>
+
+          <div class="split-layout">
+            <div class="split-left">
+              <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">已确认的业务信息</h3>
+              <div id="reply-context" style="font-size: 14px; color: var(--text-muted); line-height: 2; margin-bottom: 32px;">
+                <p>暂无数据，请先去「询盘解析」确认信息。</p>
+              </div>
+
+              <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+                <div>
+                  <label style="font-size: 13px; color: var(--text-muted); font-weight: 600;">收件人 / Para</label>
+                  <input type="email" id="emailTo" placeholder="cliente@empresa.com" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 6px; margin-top: 6px; font-size: 14px;">
+                </div>
+                <div>
+                  <label style="font-size: 13px; color: var(--text-muted); font-weight: 600;">邮件主题 / Asunto</label>
+                  <input type="text" id="emailSubject" placeholder="Confirmación de su consulta" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 6px; margin-top: 6px; font-size: 14px;">
+                </div>
+                <div>
+                  <label style="font-size: 13px; color: var(--text-muted); font-weight: 600;">邮件语气 / Tono</label>
+                  <select id="emailTone" class="form-control" style="width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 6px; margin-top: 6px; font-size: 14px; background: #fff;">
+                    <option value="formal">正式商务 / Formal</option>
+                    <option value="friendly">友好亲切 / Amigable</option>
+                    <option value="concise">简明扼要 / Conciso</option>
+                  </select>
+                </div>
+                <button id="regenerateBtn" class="btn btn-secondary" style="margin-top: 8px; width: 100%;">🔄 根据语气重新生成</button>
+              </div>
+            </div>
+
+            <div class="split-right">
+              <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">回复草稿</h3>
+              
+              <div class="input-block" style="padding: 0; overflow: hidden; height: calc(100% - 60px); display: flex; flex-direction: column;">
+                <textarea id="replyEditor" style="width: 100%; flex: 1; min-height: 400px; border: none; padding: 24px; font-size: 15px; line-height: 1.7; outline: none; resize: none; background: #ffffff;" placeholder="商务邮件草稿将在此处生成..."></textarea>
+              </div>
+              
+              <div class="btn-row" style="margin-top: 16px; justify-content: flex-end; gap: 12px;">
+                <button class="btn btn-secondary" type="button" id="copyReplyBtn">📋 复制邮件</button>
+                <button class="btn btn-primary" type="button" id="saveDraftBtn">💾 保存草稿</button>
+              </div>
+            </div>
+          </div>
+        </section>
+  <section id="view-inquiry" class="view-panel">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+            <div>
+              <h1 class="page-title" data-i18n="inquiry">询盘管理</h1>
+              <p class="page-subtitle">Inquiry Management · 管理所有客户业务线索</p>
+            </div>
+    <div style="display: flex; gap: 12px;">
+              <button class="btn btn-secondary" onclick="exportInquiriesCSV()">↓ Exportar CSV</button>
+              <button class="btn btn-primary" onclick="alert('新建表单开发中...')">+ 新建询盘</button>
+            </div>
+          </div>
+
+          <div style="background: var(--surface); border: 1px solid var(--border); padding: 16px; border-radius: var(--radius-sm); margin-bottom: 24px; display: flex; gap: 16px; flex-wrap: wrap;">
+            <input type="text" id="inquirySearch" placeholder="搜索客户名称、产品或询盘编号..." style="flex: 1; min-width: 250px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 6px;">
+            <select id="inquiryStatusFilter" style="padding: 10px 14px; border: 1px solid var(--border); border-radius: 6px; background: #fff;">
+              <option value="all">所有状态</option>
+              <option value="Nuevo">新询盘 (Nuevo)</option>
+              <option value="Pendiente de respuesta">待回复 (Pendiente)</option>
+              <option value="Respondido">已回复 (Respondido)</option>
+              <option value="En seguimiento">跟进中 (En seguimiento)</option>
+              <option value="Ganado">已成交 (Ganado)</option>
+              <option value="Cerrado">已关闭 (Cerrado)</option>
+            </select>
+          </div>
+
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm);">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+              <thead style="background: #f8fafc; border-bottom: 1px solid var(--border); color: var(--text-muted);">
+                <tr>
+                  <th style="padding: 16px 24px; font-weight: 600;">询盘编号</th>
+                  <th style="padding: 16px 24px; font-weight: 600;">客户名称</th>
+                  <th style="padding: 16px 24px; font-weight: 600;">产品</th>
+                  <th style="padding: 16px 24px; font-weight: 600;">数量</th>
+                  <th style="padding: 16px 24px; font-weight: 600;">创建时间</th>
+                  <th style="padding: 16px 24px; font-weight: 600;">状态</th>
+                  <th style="padding: 16px 24px; font-weight: 600; text-align: right;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="inquiry-table-body">
+              </tbody>
+            </table>
+          </div>
+        </section>
+        <section id="view-clients" class="view-panel">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px;">
+            <div>
+              <h1 class="page-title" data-i18n="clients">客户管理</h1>
+              <p class="page-subtitle">Customer Management · 客户档案与全局视图</p>
+            </div>
+      <div style="display: flex; gap: 12px;">
+              <button class="btn btn-secondary" onclick="exportClientsCSV()">↓ Exportar CSV</button>
+              <button class="btn btn-primary" onclick="openCustomerModal()">+ 新建客户</button>
+            </div>
+          </div>
+
+          <div style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow-sm);">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+              <thead style="background: #f8fafc; border-bottom: 1px solid var(--border); color: var(--text-muted);">
+                <tr>
+                  <th style="padding: 16px 24px; font-weight: 600;">客户名称 / 公司</th>
+                  <th style="padding: 16px 24px; font-weight: 600;">关联询盘数</th>
+                  <th style="padding: 16px 24px; font-weight: 600;">最近询盘时间</th>
+                  <th style="padding: 16px 24px; font-weight: 600; text-align: right;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="client-table-body">
+                </tbody>
+            </table>
+          </div>
+        </section>
+      <section id="view-client-detail" class="view-panel">
+          <button class="btn btn-secondary" onclick="document.querySelector('[data-target=view-clients]').click()" style="margin-bottom: 24px; padding: 6px 12px; font-size: 13px;">
+            ← 返回客户列表
+          </button>
+
+          <div class="split-layout">
+            <div class="split-left">
+              <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 24px;">
+                <div style="width: 64px; height: 64px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold;" id="client-avatar">
+                  C
+                </div>
+                <div>
+                  <h2 style="margin: 0; font-size: 20px;" id="client-name">Carlos</h2>
+                  <p style="margin: 0; color: var(--text-muted); font-size: 13px;" id="client-company">Empresa ABC · España</p>
+                </div>
+              </div>
+      <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 20px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                  <span style="color: var(--text-muted); font-size: 13px;">邮箱</span>
+                  <span style="font-weight: 600; font-size: 13px;" id="client-email">-</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                  <span style="color: var(--text-muted); font-size: 13px;">联系方式</span>
+                  <span style="font-weight: 600; font-size: 13px;" id="client-phone">-</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                  <span style="color: var(--text-muted); font-size: 13px;">首选语言</span>
+                  <span style="font-weight: 600; font-size: 13px;" id="client-lang">-</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                  <span style="color: var(--text-muted); font-size: 13px;">客户状态</span>
+                  <span style="font-weight: 600; font-size: 13px; color: var(--success);" id="client-status">-</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                  <span style="color: var(--text-muted); font-size: 13px;">备注</span>
+                  <span style="font-weight: 600; font-size: 13px;" id="client-notes">-</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="split-right">
+              <h3 style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">历史询盘记录</h3>
+              <div id="client-inquiry-list" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px;">
+                <!-- 由 JS 动态渲染 -->
+              </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 style="font-size: 18px; font-weight: 700; margin: 0;">客户跟进时间轴</h3>
+                <div style="display: flex; gap: 12px;">
+                  <button class="btn btn-secondary" onclick="exportFollowupsCSV()" style="padding: 6px 12px; font-size: 13px;">↓ Exportar CSV</button>
+                  <button class="btn btn-primary" onclick="addFollowup()" style="padding: 6px 12px; font-size: 13px;">+ 新增跟进</button>
+                </div>
+              </div>
+              <div class="activity-timeline" id="client-followup-list">
+               </div>
+            </div>
+          </div>
+        </section>
+        <section id="view-terms" class="view-panel">
+          <h1 class="page-title" data-i18n="pageTerms">术语知识库</h1>
+          <p class="page-subtitle" data-i18n="subTerms">外贸 / 财税 / 物流 专业词汇查询</p>
+          
+          <div class="terms-toolbar">
+            <input type="search" id="termSearch" class="term-search" placeholder="Buscar términos..." data-i18n-placeholder="searchPlaceholder">
+            <div class="tag-filter">
+              <span class="tag-chip active" data-i18n="tagAll">全部</span>
+              <span class="tag-chip" data-i18n="tagTrade">外贸</span>
+              <span class="tag-chip" data-i18n="tagTax">财税</span>
+              <span class="tag-chip" data-i18n="tagLogistics">物流</span>
+            </div>
+          </div>
+          <div id="termList" class="term-list"></div>
+        </section>
+ <section id="view-analytics" class="view-panel">
+          <h1 class="page-title" data-i18n="analytics">数据与反馈</h1>
+          <p class="page-subtitle">Analytics Dashboard · 实时业务洞察</p>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 24px; margin-bottom: 32px;">
+            <div class="stat-card">
+              <span class="stat-label">总询盘数</span>
+              <span class="stat-value" id="stat-total-inq">0</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">客户总数</span>
+              <span class="stat-value" id="stat-total-cust">0</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">回复率</span>
+              <span class="stat-value" id="stat-reply-rate" style="color: var(--primary);">0%</span>
+            </div>
+            <div class="stat-card">
+              <span class="stat-label">成交转化率</span>
+              <span class="stat-value" id="stat-win-rate" style="color: var(--success);">0%</span>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div class="input-block" style="padding: 24px; background: var(--surface);">
+              <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">询盘状态分布</h3>
+              <div id="status-chart" style="width: 100%; height: 350px;"></div>
+            </div>
+            <div class="input-block" style="padding: 24px; background: var(--surface);">
+              <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">每月询盘趋势</h3>
+              <div id="trend-chart" style="width: 100%; height: 350px;"></div>
+            </div>
+          </div>
+        <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 24px; margin-top: 32px;">
+         <div class="input-block" style="padding: 24px;">
+              <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">提交产品反馈 / Comentarios</h3>
+              
+              <div style="margin-bottom: 16px;">
+                <label style="font-size: 13px; font-weight: 600; color: var(--text-muted);">反馈类型 / Tipo</label>
+                <select id="fb-type" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; margin-top: 4px; background: #fff;">
+                  <option value="Bug">🐞 发现了 Bug</option>
+                  <option value="Feature">💡 功能建议</option>
+                  <option value="Experience">✨ 体验优化</option>
+                </select>
+              </div>
+
+              <div style="margin-bottom: 24px;">
+                <label style="font-size: 13px; font-weight: 600; color: var(--text-muted);">反馈内容 / Detalle</label>
+                <textarea id="fb-content" rows="4" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; margin-top: 4px; resize: vertical;" placeholder="请详细描述您遇到的问题或建议..."></textarea>
+              </div>
+
+              <button class="btn btn-primary" onclick="submitFeedback()" style="width: 100%;">🚀 提交反馈</button>
+            </div>
+          <div class="input-block" style="padding: 24px; max-height: 400px; overflow-y: auto;">
+              <h3 style="font-size: 16px; font-weight: 700; margin-bottom: 16px;">历史反馈记录</h3>
+              <div id="feedback-list" style="display: flex; flex-direction: column; gap: 12px;">
+                 </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+       </main>
+       </div>
+   <div id="followup-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: var(--surface); padding: 24px; border-radius: var(--radius); width: 400px; box-shadow: var(--shadow-md);">
+      <h3 style="margin-top: 0; margin-bottom: 20px;">新增跟进记录</h3>
+      
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 13px; font-weight: 600; color: var(--text-muted);">跟进方式 / Canal</label>
+        <select id="modal-channel" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; margin-top: 4px;">
+          <option value="Email">Email</option>
+          <option value="WhatsApp">WhatsApp</option>
+          <option value="Phone">电话 / Llamada</option>
+        </select>
+      </div>
+
+      <div style="margin-bottom: 16px;">
+        <label style="font-size: 13px; font-weight: 600; color: var(--text-muted);">跟进内容 / Nota</label>
+        <textarea id="modal-note" rows="3" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; margin-top: 4px; resize: vertical;" placeholder="记录沟通内容..."></textarea>
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label style="font-size: 13px; font-weight: 600; color: var(--text-muted);">下次跟进日期 / Próxima fecha</label>
+        <input type="date" id="modal-next-date" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; margin-top: 4px;">
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px;">
+        <button class="btn btn-secondary" onclick="document.getElementById('followup-modal').style.display='none'">取消</button>
+        <button class="btn btn-primary" onclick="submitFollowup()">保存记录</button>
+      </div>
+    </div>
+  </div>
+    <div id="customer-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background: var(--surface); padding: 24px; border-radius: var(--radius); width: 450px; box-shadow: var(--shadow-md);">
+      <h3 style="margin-top: 0; margin-bottom: 20px;">新建客户档案</h3>
+      
+      <div style="margin-bottom: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div>
+          <label style="font-size: 13px; font-weight: 600; color: var(--text-muted);">客户姓名*</label>
+          <input type="text" id="cust-name" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; margin-top: 4px;">
+        </div>
+        <div>
+          <label style="font-size: 13px; font-weight: 600; color: var(--text-muted);">公司名称</label>
+          <input type="text" id="cust-company" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; margin-top: 4px;">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 16px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div>
+          <label style="font-size: 13px; font-weight: 600; color: var(--text-muted);">国家</label>
+          <input type="text" id="cust-country" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; margin-top: 4px;">
+        </div>
+        <div>
+          <label style="font-size: 13px; font-weight: 600; color: var(--text-muted);">邮箱</label>
+          <input type="email" id="cust-email" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; margin-top: 4px;">
+        </div>
+      </div>
+
+      <div style="margin-bottom: 24px;">
+        <label style="font-size: 13px; font-weight: 600; color: var(--text-muted);">客户状态</label>
+        <select id="cust-status" style="width: 100%; padding: 10px; border: 1px solid var(--border); border-radius: 6px; margin-top: 4px;">
+          <option value="Cliente potencial">潜在客户 (Cliente potencial)</option>
+          <option value="Cliente activo">活跃客户 (Cliente activo)</option>
+          <option value="Cliente ganado">已成交 (Cliente ganado)</option>
+        </select>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: 12px;">
+        <button class="btn btn-secondary" onclick="document.getElementById('customer-modal').style.display='none'">取消</button>
+        <button class="btn btn-primary" onclick="submitCustomer()">保存档案</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>

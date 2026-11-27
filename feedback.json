@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1690000000004",
+    "type": "Feature",
+    "content": "Sería muy útil tener un botón para enviar el correo generado directamente desde la plataforma, en lugar de copiarlo.",
+    "createdAt": "2026-11-22",
+    "status": "已解决"
+  },
+  {
+    "id": "1690000000005",
+    "type": "Bug",
+    "content": "A veces la IA no reconoce bien el puerto si la frase está en plural.",
+    "createdAt": "2026-11-24",
+    "status": "待处理"
+  }
+]

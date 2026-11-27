@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1690000000001",
+    "customerName": "Carlos García",
+    "date": "2026-11-20",
+    "channel": "Email",
+    "note": "Se envió la cotización formal por las válvulas. Cliente solicitó un descuento del 5%.",
+    "nextDate": "2026-11-25"
+  },
+  {
+    "id": "1690000000002",
+    "customerName": "Carlos García",
+    "date": "2026-11-25",
+    "channel": "WhatsApp",
+    "note": "Llamada de seguimiento. Aprobó la orden con el descuento. ¡Trato cerrado!",
+    "nextDate": ""
+  },
+  {
+    "id": "1690000000003",
+    "customerName": "Lena Müller",
+    "date": "2026-11-15",
+    "channel": "Phone",
+    "note": "Discutimos los términos CIF. Lena pidió el certificado de origen.",
+    "nextDate": "2026-12-01"
+  }
+]

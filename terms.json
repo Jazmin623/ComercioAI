@@ -1,0 +1,44 @@
+[
+  {
+    "id": 1,
+    "es": "pago",
+    "zh": "付款/支付",
+    "example": "El pago debe realizarse en 30 días.",
+    "tag": "财税"
+  },
+  {
+    "id": 2,
+    "es": "anticipo",
+    "zh": "预付款",
+    "example": "Se requiere un anticipo del 30%.",
+    "tag": "财税"
+  },
+  {
+    "id": 3,
+    "es": "plazo de entrega",
+    "zh": "交货期",
+    "example": "El plazo de entrega es de 30 días.",
+    "tag": "物流"
+  },
+  {
+    "id": 4,
+    "es": "factura comercial",
+    "zh": "商业发票",
+    "example": "Adjunto la factura comercial en el correo.",
+    "tag": "财税"
+  },
+  {
+    "id": 5,
+    "es": "flete marítimo",
+    "zh": "海运费",
+    "example": "El flete marítimo ha subido mucho.",
+    "tag": "物流"
+  },
+  {
+    "es": "应付款",
+    "zh": null,
+    "example": "",
+    "tag": null,
+    "id": 6
+  }
+]

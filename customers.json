@@ -1,0 +1,52 @@
+[
+  {
+    "name": "Carlos García",
+    "company": "Industrias García S.L.",
+    "country": "España",
+    "email": "carlos@industriasgarcia.es",
+    "phone": "+34 612 345 678",
+    "lang": "Español",
+    "notes": "Cliente clave, muy sensible al precio FOB.",
+    "status": "Cliente ganado"
+  },
+  {
+    "name": "Lena Müller",
+    "company": "EcoTech Germany GmbH",
+    "country": "Alemania",
+    "email": "l.mueller@ecotech.de",
+    "phone": "+49 151 2345678",
+    "lang": "Alemán / Inglés",
+    "notes": "Requiere certificaciones CE para paneles solares.",
+    "status": "Cliente activo"
+  },
+  {
+    "name": "Alicia Romero",
+    "company": "Textiles del Sur",
+    "country": "Argentina",
+    "email": "alicia@textilessur.com.ar",
+    "phone": "+54 11 8765 4321",
+    "lang": "Español",
+    "notes": "Interesada en grandes volúmenes de algodón.",
+    "status": "Cliente potencial"
+  },
+  {
+    "name": "Pedro Pascal",
+    "company": "AutoPartes Chile",
+    "country": "Chile",
+    "email": "pedro@autoparteschile.cl",
+    "phone": "+56 9 1234 5678",
+    "lang": "Español",
+    "notes": "Pide repuestos específicos de marcas asiáticas.",
+    "status": "Cliente activo"
+  },
+  {
+    "name": "Sophie Martin",
+    "company": "Maison et Bois",
+    "country": "Francia",
+    "email": "sophie@maisonetbois.fr",
+    "phone": "+33 6 12 34 56 78",
+    "lang": "Francés",
+    "notes": "Busca diseño exclusivo en muebles de madera.",
+    "status": "Cliente potencial"
+  }
+]

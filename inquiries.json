@@ -1,0 +1,74 @@
+[
+  {
+    "id": "INQ-20261020-001",
+    "customerName": "Carlos García",
+    "product": "Válvulas industriales",
+    "quantity": "500 unidades",
+    "deadline": "Antes del 15 de noviembre",
+    "incoterm": "FOB",
+    "port": "Valencia",
+    "finance": "30% anticipo, 70% a 30 días",
+    "status": "Ganado",
+    "createdAt": "2026-10-20"
+  },
+  {
+    "id": "INQ-20261105-002",
+    "customerName": "Lena Müller",
+    "product": "Paneles solares",
+    "quantity": "1200 paneles",
+    "deadline": "Urgente",
+    "incoterm": "CIF",
+    "port": "Hamburgo",
+    "finance": "Carta de crédito",
+    "status": "En seguimiento",
+    "createdAt": "2026-11-05"
+  },
+  {
+    "id": "INQ-20261115-003",
+    "customerName": "Alicia Romero",
+    "product": "Textiles de algodón",
+    "quantity": "2000 rollos",
+    "deadline": "未提及",
+    "incoterm": "EXW",
+    "port": "未提及",
+    "finance": "未提及",
+    "status": "Pendiente de respuesta",
+    "createdAt": "2026-11-15"
+  },
+  {
+    "id": "INQ-20261118-004",
+    "customerName": "Pedro Pascal",
+    "product": "Repuestos automotrices",
+    "quantity": "50 pallets",
+    "deadline": "Diciembre",
+    "incoterm": "FOB",
+    "port": "Shanghai",
+    "finance": "100% anticipo",
+    "status": "Respondido",
+    "createdAt": "2026-11-18"
+  },
+  {
+    "id": "INQ-20261124-005",
+    "customerName": "Carlos García",
+    "product": "Válvulas industriales",
+    "quantity": "300 unidades",
+    "deadline": "2027",
+    "incoterm": "FOB",
+    "port": "Valencia",
+    "finance": "A convenir",
+    "status": "Nuevo",
+    "createdAt": "2026-11-24"
+  },
+  {
+    "id": "INQ-20261125-006",
+    "customerName": "Sophie Martin",
+    "product": "Muebles de madera",
+    "quantity": "150 juegos",
+    "deadline": "Antes de Navidad",
+    "incoterm": "CIF",
+    "port": "Le Havre",
+    "finance": "30 días",
+    "status": "Nuevo",
+    "createdAt": "2026-11-25"
+  }
+]
