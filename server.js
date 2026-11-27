@@ -13,7 +13,7 @@ const CUST_FILE = path.join(__dirname, 'customers.json');
 const FOLLOW_FILE = path.join(__dirname, 'followups.json');
 const TERM_FILE = path.join(__dirname, 'terms.json');
 const FEEDBACK_FILE = path.join(__dirname, 'feedback.json');
-const API_KEY = process.env.API_KEY || 'sk-4fb593fab9364e8fab76c31a0ea4a3b7';
+const API_KEY = process.env.API_KEY || 'sk-你的真实Key填在这里'; 
 app.post('/api/parse-inquiry', async (req, res) => {
   const inquiryText = req.body.text;
   if (!inquiryText) return res.status(400).json({ error: "没有收到文本" });
