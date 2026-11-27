@@ -1,7 +1,6 @@
-const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') 
-  ? 'http://localhost:3000' 
-  : 'https://你的后端名字.onrender.com';
- console.log("=== ComercioAI 安全版加载成功 ===");
+const API_BASE_URL = ''; 
+
+console.log("=== ComercioAI 安全版加载成功 ===");
 
 let currentLang = 'zh'; 
 const i18nDict = {
@@ -59,7 +58,8 @@ async function loadDashboard() {
     if(document.getElementById('dash-total-inq')) document.getElementById('dash-total-inq').innerText = total;
     if(document.getElementById('dash-pending')) document.getElementById('dash-pending').innerText = pending;
     if(document.getElementById('dash-replied')) document.getElementById('dash-replied').innerText = replied;
-   const followupRes = await fetch(`${API_BASE_URL}/api/followups`);
+
+    const followupRes = await fetch(`${API_BASE_URL}/api/followups`);
     const followups = await followupRes.json();
     const followupContainer = document.getElementById('dash-followup-list');
     if (followupContainer) {
@@ -82,7 +82,8 @@ async function loadDashboard() {
         });
       }
     }
-  const activityContainer = document.getElementById('dash-activity-list');
+
+    const activityContainer = document.getElementById('dash-activity-list');
     if (activityContainer) {
       activityContainer.innerHTML = "";
       const recentInquiries = inquiries.slice(0, 3);
@@ -107,6 +108,7 @@ async function loadDashboard() {
 
   } catch(e) { console.error("加载工作台数据失败", e); }
 }
+
 document.body.addEventListener('click', (e) => {
   if (e.target.classList.contains('dash-followup-btn')) {
     loadClientDetail(e.target.getAttribute('data-client'));
@@ -116,7 +118,6 @@ document.body.addEventListener('click', (e) => {
     loadClientDetail(activityItem.getAttribute('data-client'));
   }
 });
-
 loadDashboard();
 const parseBtn = document.getElementById('parseBtn');
 const confirmBtn = document.getElementById('confirmBtn');
